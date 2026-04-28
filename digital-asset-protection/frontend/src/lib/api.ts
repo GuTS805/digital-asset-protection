@@ -97,6 +97,17 @@ export const violationsApi = {
   },
 };
 
+export const demoApi = {
+  seed: async () => {
+    const res = await api.post("/api/demo/seed");
+    return res.data as { assets_created: number; violations_created: number };
+  },
+  clear: async () => {
+    const res = await api.delete("/api/demo/clear");
+    return res.data;
+  },
+};
+
 export const monitoringApi = {
   dashboard: async (): Promise<DashboardStats> => {
     const res = await api.get("/api/monitoring/dashboard");

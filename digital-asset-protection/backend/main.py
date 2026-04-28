@@ -10,6 +10,7 @@ logging.basicConfig(level=logging.INFO)
 
 from routers import assets, violations, monitoring
 from routers.auth import router as auth_router, verify_token
+from routers.demo import router as demo_router
 from services.scheduler import start_scheduler, stop_scheduler
 
 
@@ -41,6 +42,7 @@ _protected = [Depends(verify_token)]
 app.include_router(assets.router, prefix="/api/assets", tags=["Assets"], dependencies=_protected)
 app.include_router(violations.router, prefix="/api/violations", tags=["Violations"], dependencies=_protected)
 app.include_router(monitoring.router, prefix="/api/monitoring", tags=["Monitoring"], dependencies=_protected)
+app.include_router(demo_router, prefix="/api/demo", tags=["Demo"], dependencies=_protected)
 
 
 @app.get("/")

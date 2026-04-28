@@ -1,14 +1,27 @@
 import uuid
 import datetime
 import io
+import base64
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends
 from fastapi.responses import Response
 from typing import Optional
+from PIL import Image
 from database import get_db
 from models.schemas import AssetResponse, FingerprintResult
 from services.fingerprinting import generate_fingerprint, generate_hash_grid
 from services.watermarking import embed_watermark, extract_watermark, generate_watermark_id
 from services.gemini_service import analyze_asset_content
+
+
+def _thumbnail_data_url(image_data: bytes) -> str:
+    """Resize image to 480px wide and return as JPEG data URL."""
+    img = Image.open(io.BytesIO(image_data))
+    img.thumbnail((480, 480))
+    if img.mode not in ("RGB", "L"):
+        img = img.convert("RGB")
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", quality=72)
+    return "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()
 
 router = APIRouter()
 
@@ -47,16 +60,14 @@ async def upload_asset(
     original_path = f"assets/{asset_id}/original.png"
     watermarked_path = f"assets/{asset_id}/watermarked.png"
 
-    import base64
     try:
         db.storage.from_("media").upload(original_path, image_data)
         db.storage.from_("media").upload(watermarked_path, watermarked_data)
         original_url = db.storage.from_("media").get_public_url(original_path)
         watermarked_url = db.storage.from_("media").get_public_url(watermarked_path)
     except Exception:
-        mime = file.content_type or "image/png"
-        original_url = f"data:{mime};base64,{base64.b64encode(image_data).decode()}"
-        watermarked_url = f"data:{mime};base64,{base64.b64encode(watermarked_data).decode()}"
+        original_url = _thumbnail_data_url(image_data)
+        watermarked_url = _thumbnail_data_url(watermarked_data)
 
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
 
