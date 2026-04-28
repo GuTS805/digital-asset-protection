@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field
-from typing import Optional, List
+from pydantic import BaseModel, Field, validator
+from typing import Optional, List, Any
 from datetime import datetime
 from enum import Enum
 
@@ -34,20 +34,42 @@ class AssetCreate(BaseModel):
 class AssetResponse(BaseModel):
     id: str
     name: str
-    description: Optional[str]
-    media_type: str
-    original_url: str
-    watermarked_url: Optional[str]
-    phash: str
-    dhash: str
-    ahash: str
-    watermark_id: str
-    organization: str
-    tags: List[str]
-    status: str
-    scan_count: int
-    violation_count: int
-    created_at: str
+    description: Optional[str] = None
+    media_type: str = "image"
+    original_url: str = ""
+    watermarked_url: Optional[str] = None
+    phash: str = ""
+    dhash: str = ""
+    ahash: str = ""
+    watermark_id: str = ""
+    organization: str = ""
+    tags: List[str] = []
+    status: str = "monitoring"
+    scan_count: int = 0
+    violation_count: int = 0
+    created_at: str = ""
+
+    @validator("tags", pre=True, always=True)
+    def coerce_tags(cls, v):
+        if v is None:
+            return []
+        if isinstance(v, list):
+            return [str(t) for t in v]
+        if isinstance(v, str):
+            import json
+            try:
+                return json.loads(v)
+            except Exception:
+                return [v] if v else []
+        return []
+
+    @validator("created_at", pre=True, always=True)
+    def coerce_created_at(cls, v):
+        if v is None:
+            return ""
+        if isinstance(v, datetime):
+            return v.isoformat()
+        return str(v)
 
 
 class ViolationCreate(BaseModel):
@@ -62,14 +84,22 @@ class ViolationCreate(BaseModel):
 class ViolationResponse(BaseModel):
     id: str
     asset_id: str
-    asset_name: Optional[str]
-    source_url: str
-    source_platform: str
-    detected_at: str
-    similarity_score: float
-    status: str
-    evidence_url: Optional[str]
-    ai_analysis: Optional[str]
+    asset_name: Optional[str] = None
+    source_url: str = ""
+    source_platform: str = "Unknown"
+    detected_at: str = ""
+    similarity_score: float = 0.0
+    status: str = "pending"
+    evidence_url: Optional[str] = None
+    ai_analysis: Optional[str] = None
+
+    @validator("detected_at", pre=True, always=True)
+    def coerce_detected_at(cls, v):
+        if v is None:
+            return ""
+        if isinstance(v, datetime):
+            return v.isoformat()
+        return str(v)
 
 
 class ScanResult(BaseModel):

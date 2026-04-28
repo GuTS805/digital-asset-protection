@@ -34,7 +34,7 @@ function HashGrid({ phash }: { phash: string }) {
       {grid.flat().map((bit, i) => (
         <div
           key={i}
-          className={clsx("w-3 h-3 rounded-sm", bit ? "bg-blue-400" : "bg-slate-800")}
+          className={clsx("w-3 h-3 rounded-sm", bit ? "bg-blue-500" : "bg-slate-200")}
         />
       ))}
     </div>
@@ -72,19 +72,27 @@ function AssetCard({ asset, onScan, onDelete }: {
 
   return (
     <div className="card card-hover overflow-hidden">
-      {asset.original_url && (
-        <div className="relative h-36 bg-ink-700 overflow-hidden">
-          <img src={asset.original_url} alt={asset.name}
-            className="w-full h-full object-cover opacity-70"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink-800/90 to-transparent" />
-          <div className="absolute bottom-2.5 left-3">
-            <span className="text-xs px-2 py-0.5 bg-safe/15 text-safe-light border border-safe/25 rounded capitalize font-medium">
-              {asset.status}
-            </span>
+      <div className="relative h-40 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
+        {asset.original_url && asset.original_url.startsWith("data:") ? (
+          <img
+            src={asset.original_url}
+            alt={asset.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-14 h-14 rounded-2xl bg-brand/10 border border-brand/20 flex items-center justify-center">
+              <FolderLock className="w-7 h-7 text-brand" />
+            </div>
           </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        <div className="absolute bottom-2.5 left-3">
+          <span className="text-xs px-2 py-0.5 bg-white/90 text-green-700 border border-green-200 rounded-full capitalize font-semibold">
+            {asset.status}
+          </span>
         </div>
-      )}
+      </div>
 
       <div className="p-5 space-y-4">
         <div>
@@ -124,9 +132,13 @@ function AssetCard({ asset, onScan, onDelete }: {
 
         {/* Scan progress */}
         {scanning && (
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-2">
+          <div className="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
             {SCAN_STEPS.map(({ icon: Icon, label }, i) => (
-              <div key={i} className={clsx("flex items-center gap-2 text-xs py-0.5", i === scanStep ? "text-blue-400" : i < scanStep ? "text-slate-500 line-through" : "text-slate-600")}>
+              <div key={i} className={clsx("flex items-center gap-2 text-xs py-0.5",
+                i === scanStep ? "text-blue-600 font-medium"
+                : i < scanStep ? "text-slate-400 line-through"
+                : "text-slate-400"
+              )}>
                 {i === scanStep ? <Loader2 className="w-3 h-3 animate-spin shrink-0" /> : <Icon className="w-3 h-3 shrink-0" />}
                 {label}
               </div>
@@ -137,35 +149,31 @@ function AssetCard({ asset, onScan, onDelete }: {
         {/* Scan result banner */}
         {!scanning && scanResult && (
           <div className={clsx(
-            "flex items-center gap-2 px-3 py-2 rounded-lg text-sm",
-            scanResult.found === -1 ? "bg-red-500/10 text-red-400"
-              : scanResult.found > 0 ? "bg-amber-500/10 text-amber-400"
-              : "bg-green-500/10 text-green-400"
+            "flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium",
+            scanResult.found === -1 ? "bg-red-50 text-red-600 border border-red-100"
+              : scanResult.found > 0 ? "bg-amber-50 text-amber-700 border border-amber-100"
+              : "bg-green-50 text-green-700 border border-green-100"
           )}>
-            <CheckCircle className="w-4 h-4 shrink-0" />
+            <CheckCircle className="w-3.5 h-3.5 shrink-0" />
             {scanResult.found === -1 ? "Scan failed — check backend"
-              : scanResult.found > 0 ? `${scanResult.found} new violation(s) found`
+              : scanResult.found > 0 ? `${scanResult.found} violation(s) detected`
               : `Clean — no violations (${scanResult.duration}s)`}
           </div>
         )}
 
         {/* Actions */}
-        <div className="flex gap-2 pt-2 border-t border-slate-700/50">
+        <div className="flex gap-2 pt-2 border-t border-line">
           <button
             onClick={handleScan}
             disabled={scanning}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition-colors disabled:opacity-50"
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg bg-brand text-white hover:bg-brand-dark transition-colors disabled:opacity-50"
           >
-            {scanning ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            ) : (
-              <ScanLine className="w-3.5 h-3.5" />
-            )}
+            {scanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ScanLine className="w-3.5 h-3.5" />}
             {scanning ? "Scanning..." : "Scan Now"}
           </button>
           <button
             onClick={() => onDelete(asset.id)}
-            className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+            className="p-2 text-txt-muted hover:text-danger-light hover:bg-red-50 rounded-lg transition-colors border border-line"
           >
             <Trash2 className="w-4 h-4" />
           </button>
