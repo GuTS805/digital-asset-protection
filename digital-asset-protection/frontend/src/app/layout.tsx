@@ -13,16 +13,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <body className="bg-ink-950 text-txt-primary antialiased">
+    <html lang="en">
+      <body className="bg-ink-900 text-txt-primary antialiased">
         <QueryProvider>
           <MainLayout>{children}</MainLayout>
           <Toaster
             position="bottom-right"
             toastOptions={{
-              style: { background: "#1e293b", color: "#f1f5f9", border: "1px solid #334155" },
-              success: { iconTheme: { primary: "#60a5fa", secondary: "#1e293b" } },
-              error: { iconTheme: { primary: "#f87171", secondary: "#1e293b" } },
+              style: { background: "#ffffff", color: "#0f172a", border: "1px solid #e2e8f0" },
+              success: { iconTheme: { primary: "#2563eb", secondary: "#ffffff" } },
+              error: { iconTheme: { primary: "#ef4444", secondary: "#ffffff" } },
             }}
           />
         </QueryProvider>

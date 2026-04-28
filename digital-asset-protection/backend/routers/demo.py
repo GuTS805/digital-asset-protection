@@ -9,7 +9,7 @@ import io
 import base64
 
 from fastapi import APIRouter
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 
 from database import get_db
 
@@ -29,8 +29,8 @@ def _make_placeholder(label: str, bg: tuple, accent: tuple) -> str:
         draw.line([(0, y), (480, y)], fill=(*accent[:3], 30), width=1)
     # center badge
     draw.rounded_rectangle([160, 90, 320, 180], radius=12, fill=accent)
-    # label text (basic, no font needed)
-    draw.text((240, 135), label[:2].upper(), fill="white", anchor="mm")
+    # label text
+    draw.text((215, 120), label[:3].upper(), fill="white")
     buf = io.BytesIO()
     img.save(buf, format="JPEG", quality=80)
     return "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()
