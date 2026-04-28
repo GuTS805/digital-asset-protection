@@ -47,14 +47,16 @@ async def upload_asset(
     original_path = f"assets/{asset_id}/original.png"
     watermarked_path = f"assets/{asset_id}/watermarked.png"
 
+    import base64
     try:
         db.storage.from_("media").upload(original_path, image_data)
         db.storage.from_("media").upload(watermarked_path, watermarked_data)
         original_url = db.storage.from_("media").get_public_url(original_path)
         watermarked_url = db.storage.from_("media").get_public_url(watermarked_path)
     except Exception:
-        original_url = f"/api/assets/{asset_id}/raw"
-        watermarked_url = f"/api/assets/{asset_id}/watermarked"
+        mime = file.content_type or "image/png"
+        original_url = f"data:{mime};base64,{base64.b64encode(image_data).decode()}"
+        watermarked_url = f"data:{mime};base64,{base64.b64encode(watermarked_data).decode()}"
 
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
 
