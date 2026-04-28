@@ -95,7 +95,7 @@ function DmcaModal({ violationId, onClose }: { violationId: string; onClose: () 
 
 // ── Violation Detail Modal ────────────────────────────────────────────────────
 
-function ViolationModal({ violation, onClose }: { violation: Violation; onClose: () => void }) {
+export function ViolationModal({ violation, onClose }: { violation: Violation; onClose: () => void }) {
   const qc = useQueryClient();
   const [showDmca, setShowDmca] = useState(false);
   const sev = severity(violation.similarity_score);

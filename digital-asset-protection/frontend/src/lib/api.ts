@@ -77,8 +77,8 @@ export const assetsApi = {
 };
 
 export const violationsApi = {
-  list: async (status?: string): Promise<Violation[]> => {
-    const res = await api.get("/api/violations/", { params: { status } });
+  list: async (status?: string, asset_id?: string): Promise<Violation[]> => {
+    const res = await api.get("/api/violations/", { params: { status, asset_id } });
     return res.data;
   },
 
