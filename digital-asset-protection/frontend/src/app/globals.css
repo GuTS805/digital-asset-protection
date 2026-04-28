@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: #080d17;
+  color: #f1f5f9;
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #080d17; }
+::-webkit-scrollbar-thumb { background: #1e2d45; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+/* Card — solid, no glass */
+.card {
+  background: #0d1421;
+  border: 1px solid #1e2d45;
+  border-radius: 10px;
+}
+.card-hover { transition: border-color 0.15s, box-shadow 0.15s; }
+.card-hover:hover { border-color: #2563eb40; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+
+/* Keep .glass as alias for backward compat */
+.glass { background: #0d1421; border: 1px solid #1e2d45; border-radius: 10px; }
+
+/* Accent bar on left of stat cards */
+.stat-bar-blue  { border-left: 3px solid #2563eb; }
+.stat-bar-red   { border-left: 3px solid #dc2626; }
+.stat-bar-sky   { border-left: 3px solid #0ea5e9; }
+.stat-bar-green { border-left: 3px solid #16a34a; }
+
+/* Glow — kept as no-op so existing refs don't break */
+.glow-blue {}
+.glow-cyan {}
+.glow-red {}
+
+/* Gradient text — kept for landing page hero only */
+.gradient-text {
+  background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Status badges */
+.badge-pending      { @apply bg-warn/10 text-warn border border-warn/25 text-xs font-medium px-2 py-0.5 rounded; }
+.badge-confirmed    { @apply bg-danger/10 text-danger-light border border-danger/25 text-xs font-medium px-2 py-0.5 rounded; }
+.badge-resolved     { @apply bg-safe/10 text-safe-light border border-safe/25 text-xs font-medium px-2 py-0.5 rounded; }
+.badge-false_positive { @apply bg-txt-muted/10 text-txt-secondary border border-line text-xs font-medium px-2 py-0.5 rounded; }
+
+/* Scan line animation */
+.scan-container { position: relative; overflow: hidden; }
+.scan-line {
+  position: absolute; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, #2563eb, transparent);
+  animation: scanLine 2.5s linear infinite;
+}
+@keyframes scanLine {
+  0%   { top: 0%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Btn variants */
+.btn-primary {
+  @apply px-4 py-2 bg-brand text-white text-sm font-semibold rounded-lg
+         hover:bg-brand-light transition-colors;
+}
+.btn-ghost {
+  @apply px-4 py-2 bg-transparent text-txt-secondary text-sm font-medium rounded-lg
+         border border-line hover:border-line-light hover:text-txt-primary transition-colors;
+}

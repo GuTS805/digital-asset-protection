@@ -1,0 +1,12 @@
+{
+  "name": "digital-asset-protection",
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c blue,green \"npm run backend\" \"npm run frontend\"",
+    "backend": "cd backend && venv\\Scripts\\uvicorn.exe main:app --host 0.0.0.0 --port 8000",
+    "frontend": "cd frontend && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
+
